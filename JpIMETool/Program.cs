@@ -30,27 +30,42 @@ class Program
     private static IntPtr HookCallback(int ncode, IntPtr wparam, IntPtr lparam)
     {
         User32.KBDLLHOOKSTRUCT kbd = Marshal.PtrToStructure<User32.KBDLLHOOKSTRUCT>(lparam);
-        // wparam 
-
         
+        bool isInjected = (kbd.flags & LLKHF_INJECTED) == LLKHF_INJECTED;
         
-        bool injected = (kbd.flags & LLKHF_INJECTED) == LLKHF_INJECTED;
-
-
         var pressedKey = (User32.VK)kbd.vkCode;
-
-
         
-        if (injected)
+        if (isInjected)
         {
             return User32.CallNextHookEx(IntPtr.Zero, ncode, wparam, lparam);
         }
         
-        
         KeyEvent keyEvent = (KeyEvent)wparam;
+        
+        /*
+        if (pressedKey == VK_K)
+        {
+            User32.INPUT a = new User32.INPUT();
+            a.type = User32.INPUTTYPE.INPUT_KEYBOARD;
+            // https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-keybdinput
+            a.ki = a.ki with
+            {
+                wVk = (ushort)VK_KANJI,
+                //wVk = newKey.Value,
+                dwFlags = keyEvent == KeyEvent.KeyDown ? 0 : User32.KEYEVENTF.KEYEVENTF_KEYUP,
+                time = 0,
+                dwExtraInfo = IntPtr.Zero,
+                wScan = 0,
+            };
 
-        // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-mapvirtualkeyexa
+            var arr = new[] { a };
+            // Prinz size of INPUT struct
+            //Console.WriteLine(Marshal.SizeOf<User32.INPUT>());
 
+            var ret = User32.SendInput((uint)arr.Length, arr, Marshal.SizeOf<User32.INPUT>());
+            return 1;
+        }
+        */
         
         
         bool isShift = User32.GetKeyState((int)VK_SHIFT).IsPressed();
@@ -69,7 +84,7 @@ class Program
             var foregroundWindow = User32.GetForegroundWindow();
             var threadId = User32.GetWindowThreadProcessId(foregroundWindow, out var processId);
             hkl = User32.GetKeyboardLayout(threadId);
-
+            
             if (hkl.Value.LangId.Value == 1041) // Japanese
             {
                 User32.INPUT a = new User32.INPUT();
@@ -79,7 +94,7 @@ class Program
                 {
                     wVk = newKey.Value,
                     //wVk = newKey.Value,
-                    dwFlags = keyEvent == KeyEvent.KeyDown ? 0 : User32.KEYEVENTF.KEYEVENTF_KEYUP,
+                    dwFlags = keyEvent == KeyEvent.KeyDown | keyEvent == KeyEvent.SysKeyDown ? 0 : User32.KEYEVENTF.KEYEVENTF_KEYUP,
                     time = 0,
                     dwExtraInfo = IntPtr.Zero,
                     wScan = 0,
@@ -103,7 +118,7 @@ class Program
         Task.Run(() =>
         {
             Console.WriteLine(
-                $"K:{pressedKey,-15} E:{keyEvent,-15} S:{isShift,-5} C:{isControl,-5} A:{isAlt,-5} W:{isWindows,-5}, I:{injected,-5} NK:{(User32.VK?)newKey,-15} HKL:{(hkl.HasValue ? hkl.Value.DeviceId + " " + hkl.Value.LangId : " ")}");
+                $"K:{pressedKey,-15} E:{keyEvent,-15} S:{isShift,-5} C:{isControl,-5} A:{isAlt,-5} W:{isWindows,-5}, I:{isInjected,-5} NK:{(User32.VK?)newKey,-15} HKL:{(hkl.HasValue ? hkl.Value.DeviceId + " " + hkl.Value.LangId : " ")}");
         });
 
         if (newKey != null && keyIntercepted)
