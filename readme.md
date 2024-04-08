@@ -5,7 +5,7 @@ This means you can use Japanese IME with working shortcuts with other keyboard l
 
 ## Usage
 
-* Download the latest release.
+* Download the latest release [here](https://github.com/DavidBeh/JpIMETool/releases/latest).
 * Extract the folder to a location of your choice
 * Make sure that the Japanese Keyboard Layout is installed with the Microsoft IME on your system. It only supports
   Japanese and English Keyboard Layouts
