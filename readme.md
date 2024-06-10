@@ -5,7 +5,7 @@ This means you can use Japanese IME with working shortcuts with other keyboard l
 
 ## Usage
 
-* Download the latest release.
+* Download the latest release [here](https://github.com/DavidBeh/JpIMETool/releases/latest).
 * Extract the folder to a location of your choice
 * Make sure that the Japanese Keyboard Layout is installed with the Microsoft IME on your system. It only supports
   Japanese and English Keyboard Layouts
@@ -26,7 +26,7 @@ This means you can use Japanese IME with working shortcuts with other keyboard l
 * Refer to here for more information on the Japanese IME
   shortcuts: https://support.microsoft.com/en-us/windows/microsoft-japanese-ime-da40471d-6b91-4042-ae8b-713a96476916
 * You can create a shortcut to the `JpIMETool.exe` program in your startup
-  folder (`C:\Users\David\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup`) to start it automatically on
+  folder (`%userprofile%\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup`) to start it automatically on
   login
 * You can revert the keyboard layout substitution by running the `Registry Scripts/delete keyboard substitute.reg` file
   and then logging out and in again or restarting your computer
